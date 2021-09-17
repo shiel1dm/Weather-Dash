@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+</head>
+
+
+<body>
+  <header class="container is-fluid has-background-success has-text-centered">
+    <h1 class="is-size-1 has-text-weight-bold">Weather-check</h1>
+  </header>
+  <section class="container is-fluid">
+    <div class='row is-flex'>
+      <form class="block column is-one-quarter mr-6" id="form">
+        <div class="box">
+          <label for="location block"> Enter city location here:</label>
+          <div class="block">
+            <input type="text" 
+            name="location"
+            id = 'user-input'
+            placeholder="Detroit">
+          </div>
+          <button class="button is-success" type="submit">Submit</button>
+          <div id="history"></div>
+        </div>
+      </form>
+
+      <div class="container column has- is-three-quarter"></div>
+        <section
+        id="current"
+        class="test"
+        ></section>
+    </div>
+  </section>
+
+  
+  <script src='script.js'></script>
+</body>
+</html>

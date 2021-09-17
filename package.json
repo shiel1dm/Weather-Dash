@@ -1,0 +1,23 @@
+{
+  "name": "weather-dash",
+  "version": "1.0.0",
+  "description": "Using third party API's to create an interactive weather app that stores user data to local storage",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shiel1dm/Weather-Dash.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shiel1dm/Weather-Dash/issues"
+  },
+  "homepage": "https://github.com/shiel1dm/Weather-Dash#readme",
+  "dependencies": {
+    "bulma": "^0.9.3"
+  }
+}
