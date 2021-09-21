@@ -1,1 +1,18 @@
-@import 'bulma/css/bulma.css'
+#current{
+  border: 5px solid black;
+  border-radius: 15px;
+  padding: 0px;
+  text-align: center;
+}
+#container{
+  padding: 0;
+}
+/* please note, this is the ID container, not the class.
+the decision was a little tough b/c I use the container 
+class from bulma very often. But since this is the 
+primary document container, I felt using the id
+tag justified the possible confusion.*/
+
+#forecast{
+  border-top: 3px solid black;
+}

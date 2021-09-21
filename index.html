@@ -8,18 +8,17 @@
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
   
-
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <link rel="stylesheet" href="style.css">
 </head>
-
 
 <body>
   <header class="container is-fluid has-background-success has-text-centered">
     <h1 class="is-size-1 has-text-weight-bold">Weather-check</h1>
   </header>
-  <section class="container is-fluid">
+  <section class="container is-fluid" id="container"> 
     <div class='row is-flex'>
-      <form class="block column is-one-quarter mr-6" id="form">
+      <form class="block column is-one-fifth mr-6" id="form">
         <div class="box">
           <label for="location block"> Enter city location here:</label>
           <div class="block">
@@ -32,12 +31,7 @@
           <div id="history"></div>
         </div>
       </form>
-
-      <div class="container column is-three-quarter"></div>
-        <section
-        id="current"
-        class=""
-        ></section>
+      <div class="container column is-auto has-background-light is-centered is-hidden" id="current"></div>
     </div>
   </section>
 
