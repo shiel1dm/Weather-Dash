@@ -87,8 +87,7 @@ function renderForecast(forecast) {
 }
 
 function fiveDay(dailyForecasts) {
-  var startT = 'hi';
-  var endT = 'eew';
+  
   
   var forecastCard= document.createElement('div');
   var heading = document.createElement('h4');
