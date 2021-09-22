@@ -1,18 +1,55 @@
-const searchHistory = [];
+var searchHistory = [];
 var apiRoot = 'https://api.openweathermap.org';
 const apiKey = 'a2c548ada840c55d400c1f48446c1b5a';
+
+dayjs.extend(window.dayjs_plugin_utc);
+dayjs.extend(window.dayjs_plugin_timezone)
+
+//DOM
 var form = document.querySelector('#form');
 var userInput = document.querySelector('#user-input')
 var current = document.querySelector('#current')
-var history = document.querySelector('#history')
-var forecast = document.querySelector('#forecast')
+var srcHistory = document.querySelector('#history')
 
-function createCard(forecast, name, country, image){
+//functions
+function renderHistory() {
+  srcHistory.innerHTML = '';
 
+  for(var i = searchHistory.length - 1; i >= 0; i--){
+    var btn = document.createElement('button');
+    btn.setAttribute('type', 'button');
+    btn.setAttribute('class','button is-small')
+    btn.classList.add('historyBtn')
+    btn.setAttribute('search-log', searchHistory[i]);
+    btn.textContent = searchHistory[i];
+    srcHistory.append(btn);
+  }
+}
+
+function addSearch(search) {
+  if(searchHistory.indexOf(search) !== -1) {
+    return;
+  }
+  searchHistory.push(search)
+
+  localStorage.setItem('search-history', JSON.stringify(searchHistory)) //creates item in local storage classified as search-history
+  renderHistory()
+}
+
+function initHistory() {
+  var storeSearch = localStorage.getItem('search-history')
+  if(storeSearch) {
+    searchHistory = JSON.parse(storeSearch)
+  }
+  renderHistory();
+}
+
+function createCard(forecast, name, image, timezone){
+  var date = dayjs().tz(timezone).format('MM/DD/YYYY')
+  
   var temp = forecast.current.temp;
   var humidity = forecast.current.humidity;
   var name = name;
-  var country = country;
   var windSpeed = forecast.current.wind_speed
   var UV = forecast.current.uvi
   var iconUrl = `https://openweathermap.org/img/w/${image.icon}.png`;
@@ -27,6 +64,7 @@ function createCard(forecast, name, country, image){
   var cardBody = document.createElement('div');
   var heading = document.createElement('h2');
   var icon = document.createElement('img');
+  var dateText = document.createElement('p');
   var tempText = document.createElement('p');
   var windText = document.createElement('p');
   var humidityText = document.createElement('p');
@@ -41,7 +79,7 @@ function createCard(forecast, name, country, image){
   icon.setAttribute('alt', iconDescription) //sets attribute and passes in alternative search variables
   card.append(cardBody)
   
-  heading.textContent = `${name}, ${country}`
+  heading.textContent = `${name}`
   heading.append(icon)
 
   uvInfo.textContent= `Todays UV index: `;
@@ -58,7 +96,8 @@ function createCard(forecast, name, country, image){
 
   uvBtn.textContent= UV;
   uvInfo.append(uvBtn);
-  cardBody.append(heading, tempText, windText, humidityText, uvInfo)
+  cardBody.append(heading, dateText, tempText, windText, humidityText, uvInfo)
+  dateText.textContent= date
 
   tempText.textContent= `Current Temp: ${temp} ℉`
   windText.textContent= `Wind speed: ${windSpeed} MPH`
@@ -75,36 +114,65 @@ function createCard(forecast, name, country, image){
  */
 }
 
-function renderForecast(forecast) {
-  // var iconUrl = `https://openweathermap.org/img/w/${image.icon}.png`;
-  // var iconDescription = image.description || weather[0].main; 
+function renderForecast(forecast, timezone) {
+  var unixTs = forecast.dt
+  var iconUrl = `https://openweathermap.org/img/w/${forecast.weather[0].icon}.png`;
+  var iconDescription = forecast.weather[0].description || forecast.weather[0].main; 
   var temp = forecast.temp.day;
   var humidity = forecast.humidity;
   var windSpeed = forecast.wind_speed
 
-  console.log(temp, humidity, windSpeed)
+  var forecast = document.querySelector('#forecast')
+  
+  var col = document.createElement('div')
+  var card= document.createElement('div')
+  var cardBody = document.createElement('div');
+  var cardTitle = document.createElement('h5');
+  var weatherIcon = document.createElement('img');
+  var tempEl = document.createElement('p');
+  var windEl = document.createElement('p');
+  var humidityEl = document.createElement('p');
 
+  col.append(card)
+  card.append(cardBody)
+  cardBody.append(cardTitle, weatherIcon, tempEl, windEl, humidityEl)
+
+  col.setAttribute('class', 'col is-one-fifth has-background-info')
+  col.classList.add('dailyForecast')
+  card.setAttribute('id', 'forecastCard')
+
+  cardTitle.textContent = dayjs.unix(unixTs).tz(timezone).format('MM/DD/YY')
+  weatherIcon.setAttribute('src', iconUrl)
+  weatherIcon.setAttribute('alt', iconDescription)
+
+  tempEl.textContent= `Temp: ${temp} ℉`
+  windEl.textContent= `Wind speed: ${windSpeed}`
+  humidityEl.textContent= `Humidity: ${humidity}%`
+
+  forecast.append(col)
 }
 
-function fiveDay(dailyForecasts) {
-  
+function fiveDay(dailyForecasts, timezone) {
+  var startT = dayjs().tz(timezone).add(1, 'day').startOf('dat').unix();
+  var endT = dayjs().tz(timezone).add(6, 'day').startOf('dat').unix();
+
+  console.log(startT,endT)
   
   var forecastCard= document.createElement('div');
   var heading = document.createElement('h4');
 
-  forecastCard.setAttribute('class', 'col is-full')
+  forecastCard.setAttribute('class', 'col is-full is-flex is-justify-content-space-between px-2')
   forecastCard.setAttribute('id', 'forecast')
-  heading.textContent='Here\'s the forecast for the next five days:'
+  heading.textContent='Five-day forecast:'
   forecastCard.append(heading)
 
   current.append(forecastCard)
-  renderForecast(dailyForecasts[0])
 
-  // for(var i = 0; i<dailyForecasts.length; i++){
-  //   if(dailyForecasts[i].dt >= startT && dailyForecasts[i].dt < endT){
-  //     renderForecast(dailyForecasts[i])
-  //   }
-  // }
+  for(var i = 0; i<dailyForecasts.length; i++){
+    if(dailyForecasts[i].dt >= startT && dailyForecasts[i].dt < endT){
+      renderForecast(dailyForecasts[i], timezone)
+    }
+  }
 
 }
 
@@ -118,10 +186,9 @@ fetch(apiCall)
     return res.json();
   })
   .then(function(data) {
-    console.log(data) //test purposes
-     
-    createCard(data, location.name, location.sys.country, data.current.weather[0])
-    fiveDay(data.daily)
+       
+    createCard(data, location.name, data.current.weather[0], data.timezone)
+    fiveDay(data.daily, data.timezone)
   })
   .catch(function (err) {
     console.error(err);
@@ -137,6 +204,7 @@ function Coords(input){
       return res.json()
     })
     .then(function(data){
+      addSearch(input)
       weatherFetch(data, data.coord.lat, data.coord.lon)
     })
 
@@ -144,7 +212,6 @@ function Coords(input){
 
 function submitHandle(event) {
   if (!userInput.value){
-    console.log('failed on click')
     return;
   }
   
@@ -155,4 +222,18 @@ console.log(input)
 Coords(input)
 }
 
+function historyClick(event){
+  if(!event.target.matches('.historyBtn')){
+    console.log('whoops')
+    return;
+  }
+
+  var btn = event.target;
+  var search = btn.getAttribute('search-log');
+
+  Coords(search)
+}
+
+initHistory()
 form.addEventListener('submit', submitHandle)
+srcHistory.addEventListener('click', historyClick)
